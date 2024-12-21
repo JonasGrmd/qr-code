@@ -1,1 +1,49 @@
-Welcome !
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bruit Blanc Dynamique</title>
+</head>
+<body>
+  <h1>Bruit Blanc Dynamique</h1>
+  <p>Appuyez sur le bouton pour démarrer le bruit blanc.</p>
+
+  <button onclick="toggleNoise()">Démarrer / Arrêter le Bruit Blanc</button>
+
+  <script>
+    let audioContext;
+    let whiteNoise;
+    let isPlaying = false;
+
+    // Fonction pour générer le bruit blanc
+    function createWhiteNoise() {
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      whiteNoise = audioContext.createBufferSource();
+      let buffer = audioContext.createBuffer(1, audioContext.sampleRate * 2, audioContext.sampleRate);
+      let output = buffer.getChannelData(0);
+      
+      // Générer le bruit blanc
+      for (let i = 0; i < buffer.length; i++) {
+        output[i] = Math.random() * 2 - 1; // Génère un nombre aléatoire entre -1 et 1
+      }
+
+      whiteNoise.buffer = buffer;
+      whiteNoise.loop = true;  // Pour rendre le bruit continu
+      whiteNoise.connect(audioContext.destination);
+    }
+
+    // Fonction pour démarrer et arrêter le bruit blanc
+    function toggleNoise() {
+      if (isPlaying) {
+        whiteNoise.stop();
+        isPlaying = false;
+      } else {
+        createWhiteNoise();
+        whiteNoise.start();
+        isPlaying = true;
+      }
+    }
+  </script>
+</body>
+</html>
